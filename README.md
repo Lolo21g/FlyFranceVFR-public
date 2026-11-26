@@ -21,15 +21,14 @@ Les installateurs Windows seront signés via SignPath Foundation après approbat
 
 ## Code signing policy
 
-Free code signing provided by [SignPath.io](https://about.signpath.io),
-certificate by [SignPath Foundation](https://signpath.org)
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org)
 
-- Committers and reviewers: *propriétaire du dépôt* (à remplacer par le lien de
-  votre équipe/organisation une fois publiée)
-- Approvers: *propriétaire du dépôt* (idem)
-- Privacy policy: FlyFranceVFR fonctionne en local et ne transmet aucune donnée
-  personnelle à des serveurs tiers ; les données OpenAIP sont téléchargées
-  depuis openaip.net.
+- Committers and reviewers: Laurent Gueyffier ([@Lolo21g](https://github.com/Lolo21g))
+- Approvers: Laurent Gueyffier ([@Lolo21g](https://github.com/Lolo21g))
+- Chaque demande de signature est approuvée manuellement.
+- Seuls les binaires compilés depuis ce dépôt sont signés.
+- L'authentification multifacteur est activée sur GitHub et SignPath.
+- Privacy policy: FlyFranceVFR fonctionne en local et ne transmet aucune donnée personnelle à des serveurs tiers ; les données OpenAIP sont téléchargées depuis openaip.net.
 
 ## Compilation
 
