@@ -17,8 +17,7 @@ Il se compose de :
 
 ## Téléchargement
 
-Les installateurs Windows signés sont disponibles sur
-[Rikoooo](https://www.rikoooo.com/) (page de téléchargement FlyFranceVFR).
+Les installateurs Windows seront signés via SignPath Foundation après approbation du projet. Tant que ce n'est pas le cas, les notes de version indiquent si un exécutable n'est pas signé.
 
 ## Code signing policy
 
