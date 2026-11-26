@@ -1,0 +1,132 @@
+name: Build FlyFranceVFR
+
+# A placer dans le depot sous : .github/workflows/build.yml
+# Lancement manuel : onglet Actions > "Build FlyFranceVFR" > Run workflow
+# La signature SignPath est ignoree tant que la variable SIGNPATH_ORGANIZATION_ID
+# n'existe pas (Settings > Secrets and variables > Actions > Variables).
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      PACKAGE_DIR: ${{ github.workspace }}\windows_app\inno_package
+      WORK_DIR: ${{ github.workspace }}\_work
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---------------- Lanceur .NET ----------------
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'   # A VERIFIER : version .NET de ton projet
+
+      - name: Publier le lanceur Windows
+        run: dotnet publish windows_app/FlyFranceVFR.Windows -c Release -r win-x64 --self-contained -o "$env:PACKAGE_DIR"
+
+      # ---------------- Bridge Python ----------------
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'    # A VERIFIER : ta version de Python
+
+      - name: Installer les dependances Python
+        # A VERIFIER : idealement, creer un fichier bridge/requirements.txt et l'utiliser ici
+        run: python -m pip install pyinstaller pyinstaller-hooks-contrib websockets SimConnect vosk sounddevice pillow qrcode
+
+      - name: Telecharger le modele Vosk
+        run: |
+          New-Item -ItemType Directory -Force "$env:WORK_DIR\vosk" | Out-Null
+          Invoke-WebRequest -Uri "https://alphacephei.com/vosk/models/vosk-model-small-fr-0.22.zip" -OutFile "$env:WORK_DIR\vosk.zip"
+          Expand-Archive "$env:WORK_DIR\vosk.zip" -DestinationPath "$env:WORK_DIR\vosk"
+
+      - name: Compiler le bridge (PyInstaller)
+        working-directory: bridge
+        run: |
+          python -m PyInstaller msfs_bridge_work.py --name FlyFranceVFR_Bridge --noconfirm --clean `
+            --distpath "$env:WORK_DIR\pyi\dist" --workpath "$env:WORK_DIR\pyi\build" --specpath "$env:WORK_DIR\pyi" `
+            --collect-all vosk --collect-all SimConnect --collect-all PIL --collect-all qrcode `
+            --add-data "$env:WORK_DIR\vosk\vosk-model-small-fr-0.22;vosk-model-small-fr-0.22"
+
+      - name: Assembler le dossier bridge du package
+        # A VERIFIER avec FlyFranceVFR_Inno.iss : contenu attendu dans inno_package\bridge
+        run: |
+          New-Item -ItemType Directory -Force "$env:PACKAGE_DIR\bridge" | Out-Null
+          robocopy bridge "$env:PACKAGE_DIR\bridge" /E /XF *.py /XD __pycache__ | Out-Null
+          Copy-Item -Recurse -Force "$env:WORK_DIR\pyi\dist\FlyFranceVFR_Bridge\*" "$env:PACKAGE_DIR\bridge"
+          exit 0
+
+      # ---------------- Signature des exe ----------------
+      - name: Preparer les exe a signer
+        run: |
+          New-Item -ItemType Directory -Force "$env:WORK_DIR\to-sign" | Out-Null
+          Copy-Item "$env:PACKAGE_DIR\FlyFranceVFR.exe" "$env:WORK_DIR\to-sign\"
+          Copy-Item "$env:PACKAGE_DIR\bridge\FlyFranceVFR_Bridge.exe" "$env:WORK_DIR\to-sign\"
+
+      - name: Deposer les exe (non signes)
+        id: upload-exes
+        uses: actions/upload-artifact@v4
+        with:
+          name: exes-non-signes
+          path: ${{ env.WORK_DIR }}\to-sign
+
+      - name: Signer les exe (SignPath)
+        if: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+        uses: signpath/github-action-submit-signing-request@v1   # A VERIFIER : version dans la doc SignPath
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: FlyFranceVFR
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: exes
+          github-artifact-id: ${{ steps.upload-exes.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: ${{ env.WORK_DIR }}\signed-exes
+
+      - name: Remplacer les exe par les versions signees
+        if: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+        run: |
+          Copy-Item -Force "$env:WORK_DIR\signed-exes\FlyFranceVFR.exe" "$env:PACKAGE_DIR\FlyFranceVFR.exe"
+          Copy-Item -Force "$env:WORK_DIR\signed-exes\FlyFranceVFR_Bridge.exe" "$env:PACKAGE_DIR\bridge\FlyFranceVFR_Bridge.exe"
+
+      # ---------------- Installateur ----------------
+      - name: Installer Inno Setup
+        run: choco install innosetup -y --no-progress
+
+      - name: Compiler l'installateur
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" windows_app\FlyFranceVFR_Inno.iss
+          if ($LASTEXITCODE -ne 0) { throw "Echec Inno Setup" }
+
+      - name: Deposer l'installateur
+        id: upload-setup
+        uses: actions/upload-artifact@v4
+        with:
+          name: installateur-non-signe
+          path: windows_app\inno_output\Setup_FlyFranceVFR_*.exe
+
+      - name: Signer l'installateur (SignPath)
+        if: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+        uses: signpath/github-action-submit-signing-request@v1   # A VERIFIER : version dans la doc SignPath
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: FlyFranceVFR
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: installer
+          github-artifact-id: ${{ steps.upload-setup.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: ${{ env.WORK_DIR }}\signed-setup
+
+      - name: Deposer l'installateur signe
+        if: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: installateur-signe
+          path: ${{ env.WORK_DIR }}\signed-setup
