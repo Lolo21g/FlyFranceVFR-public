@@ -1,0 +1,116 @@
+{
+  "service": "siv",
+  "context": "avec_mission",
+  "scenarios": {
+    "enroute": [
+      {
+        "id": "siv-contact",
+        "kind": "bonjour",
+        "phase": "Contact",
+        "color": "#60a5fa",
+        "text": "{station} de {cs}, bonjour.",
+        "motsValidation": [["bonjour"]],
+        "response": "{shortCs}, {station}, bonjour."
+      },
+      {
+        "id": "siv-suivi",
+        "kind": "params",
+        "phase": "Suivi",
+        "color": "#34d399",
+        "requires": ["siv-contact"],
+        "surface": "air",
+        "text": "{shortCs}, {acType} VFR avec {pob}, en provenance de {sivOrigin}, à destination de {sivDestination}, {sivPosition}, {qnh}, transpondeur 7000, je demande suivi de vol et information de trafic.",
+        "motsValidation": [["suivi"], ["trafic","information"]],
+        "response": "{shortCs}, transpondeur {sivSquawk}, {qnh}. Pas de trafic connu à vous signaler."
+      },
+      {
+        "id": "siv-params-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": ["siv-suivi"],
+        "surface": "air",
+        "text": "Transpondeur {sivSquawk}, {qnh}, {shortCs}.",
+        "motsValidation": [["transpondeur"], ["{sivSquawk}"]],
+        "response": null
+      },
+      {
+        "id": "siv-trafic",
+        "kind": "trafic",
+        "phase": "Trafic",
+        "color": "#38bdf8",
+        "requires": ["siv-params-readback"],
+        "surface": "air",
+        "text": "{shortCs}, je demande information de trafic.",
+        "motsValidation": [["trafic"]],
+        "response": "{trafficInfo}"
+      },
+      {
+        "id": "siv-meteo",
+        "kind": "meteo",
+        "phase": "Météo",
+        "color": "#f59e0b",
+        "requires": ["siv-params-readback"],
+        "surface": "air",
+        "text": "{shortCs}, je demande météo sur {sivDestination}.",
+        "motsValidation": [["meteo"]],
+        "response": "{shortCs}, météo pour {sivDestination}, {qnh}, {wind}."
+      },
+      {
+        "id": "siv-transit",
+        "kind": "depart",
+        "phase": "Transit",
+        "color": "#c084fc",
+        "when": "sivTransitMission",
+        "requires": ["siv-params-readback"],
+        "surface": "air",
+        "text": "{shortCs}, je demande transit VFR dans votre secteur.",
+        "motsValidation": [["transit"]],
+        "response": "{shortCs}, transit VFR approuvé, {qnh}, rappelez sortie de secteur."
+      },
+      {
+        "id": "siv-transit-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "sivTransitMission",
+        "requires": ["siv-transit"],
+        "surface": "air",
+        "text": "Transit VFR approuvé, {qnh}, je rappelle sortie de secteur. {shortCs}.",
+        "motsValidation": [["transit"], ["rappel"], ["sortie"]],
+        "response": null
+      },
+      {
+        "id": "siv-change",
+        "kind": "change",
+        "phase": "Changement",
+        "color": "#fb7185",
+        "hidden": true,
+        "requires": ["siv-params-readback"],
+        "surface": "air",
+        "text": "{shortCs}, changement de cap ou de niveau, je vous rappelle.",
+        "motsValidation": [["changement","cap","niveau"]],
+        "response": "{shortCs}, changement reçu, rappelez tout nouveau changement."
+      },
+      {
+        "id": "siv-quitter",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": ["siv-params-readback"],
+        "surface": "air",
+        "text": "{shortCs}, {sivQuitContext}, je demande à quitter la fréquence.",
+        "motsValidation": [["demande"], ["quitter","fréquence"]],
+        "response": "{shortCs}, transpondeur 7000, vous pouvez quitter la fréquence, bonne journée."
+      },
+      {
+        "id": "siv-quitter-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": ["siv-quitter"],
+        "surface": "air",
+        "text": "Transpondeur 7000, je quitte la fréquence, au revoir, {shortCs}.",
+        "motsValidation": [["quitte"], ["fréquence"]],
+        "response": null
+      }
+    ]
+  }
+}

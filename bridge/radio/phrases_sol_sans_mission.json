@@ -1,0 +1,61 @@
+{
+  "service": "sol",
+  "context": "sans_mission",
+  "scenarios": {
+    "libre departure": [
+      {
+        "id": "sol-contact-libre",
+        "kind": "bonjour",
+        "phase": "Contact",
+        "color": "#60a5fa",
+        "text": "{groundContactName} de {cs}, bonjour.",
+        "motsValidation": [["bonjour"]],
+        "response": "{shortCs}, {groundContactName}, bonjour."
+      },
+      {
+        "id": "sol-taxi-request-libre",
+        "kind": "params",
+        "phase": "Roulage",
+        "color": "#34d399",
+        "when": "notTourDePiste",
+        "surface": "ground",
+        "requires": ["sol-contact-libre"],
+        "text": "{shortCs}, {acType} VFR avec __ personne(s) à bord, au parking, {atisReceived}, je demande le roulage pour un vol local (ou à destination de ___).",
+        "motsValidation": [["parking"], ["roulage"]],
+        "response": "{shortCs}, transpondeur {groundSquawk}, roulez au point d'attente {holdingFull}, rappelez Prêt."
+      },
+      {
+        "id": "sol-taxi-readback-libre",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "surface": "ground",
+        "requires": ["sol-taxi-request-libre"],
+        "text": "Transpondeur {groundSquawk}, je roule vers le point d'attente {holdingFull}, je rappelle prêt, {shortCs}.",
+        "motsValidation": [["transpondeur"], ["{groundSquawk}"], ["attente"]],
+        "response": null
+      },
+      {
+        "id": "sol-ready-libre",
+        "kind": "depart",
+        "phase": "Attente",
+        "color": "#f59e0b",
+        "surface": "ground",
+        "requires": ["sol-taxi-readback-libre"],
+        "text": "{shortCs}, au point d'attente {holdingFull}, prêt au départ.",
+        "motsValidation": [["point"], ["prêt","départ"]],
+        "response": "{shortCs}, contactez {trafficName} Tour sur {towerFreq}."
+      },
+      {
+        "id": "sol-tower-transfer-libre",
+        "kind": "quitter",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "surface": "ground",
+        "requires": ["sol-ready-libre"],
+        "text": "Je contacte {trafficName} Tour sur {towerFreq}, je quitte la fréquence, {farewell}, {shortCs}.",
+        "motsValidation": [["contact"], ["tour"], ["quitte"]],
+        "response": "{shortCs}, vous pouvez quitter, au revoir, bon vol."
+      }
+    ]
+  }
+}

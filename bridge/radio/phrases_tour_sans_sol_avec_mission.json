@@ -1,0 +1,109 @@
+{
+  "service": "tour",
+  "context": "sans_sol_avec_mission",
+  "insertBefore": {"departure": "tour-ready", "tourDePiste": "tour-ready-tdp"},
+  "scenarios": {
+    "departure": [
+      {
+        "id": "tour-taxi-request",
+        "kind": "taxiViaTour",
+        "phase": "Roulage",
+        "color": "#34d399",
+        "when": "departureTower",
+        "groundVariant": "towerAsGround",
+        "requires": ["tour-contact-start"],
+        "surface": "ground",
+        "text": "{shortCs}, {acType} VFR avec {pob}, au parking{atisReceived}, je demande le roulage {destination}.",
+        "motsValidation": [["roulage"], ["parking"]],
+        "response": "{shortCs}, {station}, transpondeur {towerSquawk}, roulez au point d'attente {holdingFull}, rappelez Prêt."
+      },
+      {
+        "id": "tour-taxi-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "groundVariant": "towerAsGround",
+        "requires": ["tour-taxi-request"],
+        "surface": "ground",
+        "text": "Transpondeur {towerSquawk}, je roule vers le point d'attente {holdingFull}, je rappelle prêt, {shortCs}.",
+        "motsValidation": [["transpondeur"], ["{towerSquawk}"], ["point","attente"]],
+        "response": null
+      },
+      {
+        "id": "tour-ready-sanssol",
+        "kind": "clearance-via-tour",
+        "phase": "Départ",
+        "color": "#34d399",
+        "when": "departureTower",
+        "groundVariant": "towerAsGround",
+        "requires": ["tour-taxi-readback"],
+        "surface": "ground",
+        "text": "{shortCs}, au point d'attente {holdingFull}, prêt au départ {destination}.",
+        "motsValidation": [["point","attente"], ["prêt","départ"]],
+        "response": "{shortCs}, alignez-vous {piste}, autorisé décollage, {wind}."
+      },
+      {
+        "id": "tour-lineup-takeoff-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "departureTower",
+        "groundVariant": "towerAsGround",
+        "requires": ["tour-ready-sanssol"],
+        "surface": "ground",
+        "text": "Je m'aligne et décolle {piste}, {shortCs}.",
+        "motsValidation": [["aligne"], ["décolle"]],
+        "response": null
+      }
+    ],
+    "tourDePiste": [
+      {
+        "id": "tour-taxi-request-tdp",
+        "kind": "taxiViaTourTdp",
+        "phase": "Roulage",
+        "color": "#38bdf8",
+        "when": "departureTower",
+        "groundVariant": "towerAsGround",
+        "requires": ["tour-contact-start-tdp"],
+        "surface": "ground",
+        "text": "{shortCs}, {acType} VFR avec {pob}, au parking{atisReceived}, pour des tours de piste, je demande le roulage.",
+        "motsValidation": [["roulage"], ["tours","piste"]],
+        "response": "{shortCs}, {station}, transpondeur {towerSquawk}, roulez au point d'attente {holdingFull}, rappelez Prêt."
+      },
+      {
+        "id": "tour-taxi-readback-tdp",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "groundVariant": "towerAsGround",
+        "requires": ["tour-taxi-request-tdp"],
+        "surface": "ground",
+        "text": "Transpondeur {towerSquawk}, je roule vers le point d'attente {holdingFull}, je rappelle prêt, {shortCs}.",
+        "motsValidation": [["transpondeur"], ["{towerSquawk}"], ["point d attente"]],
+        "response": null
+      },
+      {
+        "id": "tour-ready-sanssol-tdp",
+        "kind": "clearance-via-tour-tdp",
+        "phase": "Départ",
+        "color": "#34d399",
+        "when": "departureTower",
+        "groundVariant": "towerAsGround",
+        "requires": ["tour-taxi-readback-tdp"],
+        "surface": "ground",
+        "text": "{shortCs}, au point d'attente {holdingFull}, prêt au départ {destination}.",
+        "motsValidation": [["point","attente"], ["prêt","départ"]],
+        "response": "{shortCs}, alignez-vous {piste}, autorisé décollage, {wind}."
+      },
+      {
+        "id": "tour-lineup-takeoff-readback-tdp",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "departureTower",
+        "groundVariant": "towerAsGround",
+        "requires": ["tour-ready-sanssol-tdp"],
+        "surface": "ground",
+        "text": "Je m'aligne et décolle {piste}, {shortCs}.",
+        "motsValidation": [["aligne"], ["décolle"]],
+        "response": null
+      }
+    ]
+  }
+}

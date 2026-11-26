@@ -1,0 +1,138 @@
+{
+  "service": "sol",
+  "context": "avec_mission",
+  "scenarios": {
+    "departure": [
+      {
+        "id": "sol-contact",
+        "kind": "bonjour",
+        "phase": "Contact",
+        "color": "#60a5fa",
+        "text": "{groundContactName} de {cs}, bonjour.",
+        "motsValidation": [["bonjour"]],
+        "response": "{shortCs}, {groundContactName}, bonjour."
+      },
+      {
+        "id": "sol-taxi-request",
+        "kind": "params",
+        "phase": "Roulage",
+        "color": "#34d399",
+        "when": "notTourDePiste",
+        "requires": ["sol-contact"],
+        "surface": "ground",
+        "text": "{shortCs}, {acType} VFR avec {pob}, au parking{atisReceived}, je demande le roulage {destination}.",
+        "motsValidation": [["parking"], ["roulage"]],
+        "response": "{shortCs}, transpondeur {groundSquawk}, roulez au point d'attente {holdingFull}, rappelez Prêt."
+      },
+      {
+        "id": "sol-taxi-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": ["sol-taxi-request"],
+        "surface": "ground",
+        "text": "Transpondeur {groundSquawk}, je roule vers le point d'attente {holdingFull}, je rappelle prêt, {shortCs}.",
+        "motsValidation": [["transpondeur"], ["{groundSquawk}"], ["attente"]],
+        "response": null
+      },
+      {
+        "id": "sol-ready",
+        "kind": "depart",
+        "phase": "Attente",
+        "color": "#f59e0b",
+        "requires": ["sol-taxi-readback"],
+        "surface": "ground",
+        "text": "{shortCs}, au point d'attente {holdingFull}, prêt au départ.",
+        "motsValidation": [["point"], ["prêt","départ"]],
+        "response": "{shortCs}, contactez {trafficName} Tour sur {towerFreq}."
+      },
+      {
+        "id": "sol-tower-transfer",
+        "kind": "quitter",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": ["sol-ready"],
+        "surface": "ground",
+        "text": "Je contacte {trafficName} Tour sur {towerFreq}, je quitte la fréquence, {farewell}, {shortCs}.",
+        "motsValidation": [["contact"], ["tour"], ["quitte"]],
+        "response": "{shortCs}, vous pouvez quitter, au revoir, bon vol."
+      }
+    ],
+    "arrival": [
+      {
+        "id": "sol-parking",
+        "kind": "pistedegagee",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "surface": "ground",
+        "text": "{shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [["piste","dégagée"], ["parking"]],
+        "response": "{shortCs}, roulez parking."
+      },
+      {
+        "id": "sol-leave-return",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": ["sol-parking"],
+        "surface": "ground",
+        "text": "{shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [["quitte"], ["fréquence"]],
+        "response": "{shortCs}, vous pouvez quitter, au revoir."
+      }
+    ],
+    "tourDePiste": [
+      {
+        "id": "sol-contact-tdp",
+        "kind": "bonjour",
+        "phase": "Contact",
+        "color": "#60a5fa",
+        "text": "{groundContactName} de {cs}, bonjour.",
+        "motsValidation": [["bonjour"]],
+        "response": "{shortCs}, {groundContactName}, bonjour."
+      },
+      {
+        "id": "sol-taxi-request-tdp",
+        "kind": "params",
+        "phase": "Roulage",
+        "color": "#38bdf8",
+        "requires": ["sol-contact-tdp"],
+        "surface": "ground",
+        "text": "{shortCs}, {acType} VFR avec {pob}, au parking{atisReceived}, je demande le roulage pour des tours de piste.",
+        "motsValidation": [["roulage"], ["tours","piste"]],
+        "response": "{shortCs}, transpondeur {groundSquawk}, roulez au point d'attente {holdingFull}, rappelez Prêt."
+      },
+      {
+        "id": "sol-taxi-readback-tdp",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": ["sol-taxi-request-tdp"],
+        "surface": "ground",
+        "text": "Transpondeur {groundSquawk}, je roule vers le point d'attente {holdingFull}, je rappellerai prêt, {shortCs}.",
+        "motsValidation": [["transpondeur"], ["{groundSquawk}"], ["point d attente"]],
+        "response": null
+      },
+      {
+        "id": "sol-ready-tdp",
+        "kind": "depart",
+        "phase": "Attente",
+        "color": "#f59e0b",
+        "requires": ["sol-taxi-readback-tdp"],
+        "surface": "ground",
+        "text": "{shortCs}, au point d'attente {holdingFull}, prêt au départ.",
+        "motsValidation": [["point d attente"], ["prêt","départ"]],
+        "response": "{shortCs}, contactez {trafficName} Tour sur {towerFreq}, au revoir."
+      },
+      {
+        "id": "sol-tower-transfer-tdp",
+        "kind": "quitter",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": ["sol-ready-tdp"],
+        "surface": "ground",
+        "text": "Je contacte {trafficName} Tour sur {towerFreq}, je quitte la fréquence, {farewell}, {shortCs}.",
+        "motsValidation": [["contact"], ["tour"], ["quitte","frequence"]],
+        "response": "{shortCs}, vous pouvez quitter, au revoir."
+      }
+    ]
+  }
+}

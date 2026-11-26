@@ -1,0 +1,58 @@
+{
+  "service": "tour",
+  "context": "sans_sol_sans_mission",
+  "insertBefore": {"libre": "tour-ready-libre"},
+  "scenarios": {
+    "libre departure": [
+      {
+        "id": "tour-taxi-request-libre",
+        "kind": "taxiViaTour",
+        "phase": "Roulage",
+        "color": "#34d399",
+        "when": "departureTower",
+        "groundVariant": "towerAsGround",
+        "surface": "ground",
+        "requires": ["tour-contact-start-libre"],
+        "text": "{shortCs}, {acType} VFR avec __ personne(s) à bord, au parking{atisReceived}, je demande le roulage pour un vol local (ou à destination de ___).",
+        "motsValidation": [["roulage","rouler"], ["parking"]],
+        "response": "{shortCs}, {station}, transpondeur {towerSquawk}, roulez au point d'attente {holdingFull}, rappelez Prêt."
+      },
+      {
+        "id": "tour-taxi-readback-libre",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "groundVariant": "towerAsGround",
+        "surface": "ground",
+        "requires": ["tour-taxi-request-libre"],
+        "text": "Transpondeur {towerSquawk}, je roule vers le point d'attente {holdingFull}, je rappelle prêt, {shortCs}.",
+        "motsValidation": [["transpondeur"], ["{towerSquawk}"], ["point d attente"]],
+        "response": null
+      },
+      {
+        "id": "tour-ready-sanssol-libre",
+        "kind": "clearance-via-tour",
+        "phase": "Départ",
+        "color": "#34d399",
+        "when": "departureTower",
+        "groundVariant": "towerAsGround",
+        "surface": "ground",
+        "requires": ["tour-taxi-readback-libre"],
+        "text": "{shortCs}, au point d'attente {holdingFull}, prêt au départ.",
+        "motsValidation": [["point d attente"], ["prêt","départ"]],
+        "response": "{shortCs}, alignez-vous {piste}, autorisé décollage, {wind}."
+      },
+      {
+        "id": "tour-lineup-takeoff-readback-libre",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "departureTower",
+        "groundVariant": "towerAsGround",
+        "surface": "ground",
+        "requires": ["tour-ready-sanssol-libre"],
+        "text": "Je m'aligne et décolle {piste}, {shortCs}.",
+        "motsValidation": [["align"], ["je decolle","je décolle","decolle","décolle","nous decollons","nous décollons","decollons","décollons"]],
+        "response": null
+      }
+    ]
+  }
+}

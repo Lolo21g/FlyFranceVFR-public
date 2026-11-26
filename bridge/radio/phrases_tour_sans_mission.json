@@ -1,0 +1,234 @@
+{
+  "service": "tour",
+  "context": "sans_mission",
+  "scenarios": {
+    "libre departure": [
+      {
+        "id": "tour-contact-start-libre",
+        "kind": "bonjour",
+        "phase": "Contact",
+        "color": "#60a5fa",
+        "when": "departureTower",
+        "text": "{station} de {cs}, bonjour.",
+        "motsValidation": [["bonjour"]],
+        "response": "{shortCs}, {station}, bonjour."
+      },
+      {
+        "id": "tour-ready-libre",
+        "kind": "params_departure",
+        "phase": "Départ",
+        "color": "#34d399",
+        "when": "departureTower",
+        "groundVariant": "withGround",
+        "surface": "ground",
+        "requires": ["tour-contact-start-libre"],
+        "text": "{shortCs}, au point d'attente {holdingFull}, prêt au départ pour un vol local (ou à destination de ___).",
+        "motsValidation": [["attente"], ["départ"]],
+        "response": "{shortCs}, {station}, transpondeur {towerSquawk}, {piste}, {wind}, {qnh}. {departureInstruction} Maintenez point d'attente."
+      },
+      {
+        "id": "tour-readback-start-libre",
+        "kind": "lineup",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "departureTower",
+        "groundVariant": "withGround",
+        "surface": "ground",
+        "requires": ["tour-ready-libre"],
+        "text": "Transpondeur {towerSquawk}, {piste}, {qnh}. {departureReadback} Je maintiens point d'attente, {shortCs}.",
+        "motsValidation": [["transpondeur"], ["maintiens","attente"]],
+        "response": "{shortCs}, alignez-vous et attendez piste {runway}."
+      },
+      {
+        "id": "tour-lineup-readback-libre",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "departureTower",
+        "groundVariant": "withGround",
+        "surface": "ground",
+        "requires": ["tour-readback-start-libre"],
+        "text": "Je m'aligne et j'attends {piste}, {shortCs}.",
+        "motsValidation": [["attend"], ["piste"]],
+        "response": null
+      },
+      {
+        "id": "tour-ready-lineup-libre",
+        "kind": "depart",
+        "phase": "Décollage",
+        "color": "#38bdf8",
+        "when": "departureTower",
+        "groundVariant": "withGround",
+        "surface": "ground",
+        "requires": ["tour-lineup-readback-libre"],
+        "text": "{shortCs}, aligné {piste}, prêt au décollage.",
+        "motsValidation": [["piste"], ["décollage"]],
+        "response": "{shortCs}, {piste}, autorisé décollage, {wind}."
+      },
+      {
+        "id": "tour-takeoff-readback-libre",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "departureTower",
+        "groundVariant": "withGround",
+        "surface": "ground",
+        "requires": ["tour-ready-lineup-libre"],
+        "text": "{piste}, je décolle, {shortCs}.",
+        "motsValidation": [["décolle"]],
+        "response": null
+      },
+      {
+        "id": "tour-leave-start-libre",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "when": "departureTower",
+        "surface": "air",
+        "requires": ["tour-takeoff-readback-libre"],
+        "text": "{shortCs}, passe {departurePoint} à {altitude} pieds, pour quitter la fréquence.",
+        "motsValidation": [["quitte"], ["fréquence"]],
+        "response": "{shortCs}, vous pouvez quitter, au revoir, bon vol."
+      },
+      {
+        "id": "tour-leave-start-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "departureTower",
+        "surface": "air",
+        "requires": ["tour-leave-start"],
+        "text": "Je quitte la fréquence, {farewell}, {shortCs}.",
+        "motsValidation": [["quitte"]],
+        "response": null
+      }
+    ],
+    "libre arrival": [
+      {
+        "id": "tour-contact-libre",
+        "kind": "bonjour",
+        "phase": "Contact",
+        "color": "#60a5fa",
+        "when": "inboundTower",
+        "text": "{station} de {cs}, bonjour.",
+        "motsValidation": [["bonjour"]],
+        "response": "{shortCs}, {station}, bonjour."
+      },
+      {
+        "id": "tour-params-libre",
+        "kind": "params_inbound",
+        "phase": "Arrivée",
+        "color": "#a78bfa",
+        "when": "inboundTower",
+        "surface": "air",
+        "requires": ["tour-contact-libre"],
+        "text": "{shortCs}, {acType} VFR avec __ personne(s) à bord, {inboundOrigin}, pour un atterissage complet.",
+        "motsValidation": [["demande"], ["intégration"]],
+        "response": "{shortCs}, {station}, transpondeur {towerSquawk}, {piste}, {wind}, {qnh}. Rappelez point {reportPoint}."
+      },
+      {
+        "id": "tour-params-readback-libre",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "inboundTower",
+        "surface": "air",
+        "requires": ["tour-params-libre"],
+        "text": "Transpondeur {towerSquawk}, {piste}, {qnh}, je rappelle {reportPoint}, {shortCs}.",
+        "motsValidation": [["transpondeur"]],
+        "response": null
+      },
+      {
+        "id": "tour-report-libre",
+        "kind": "reportpoint",
+        "phase": "Report",
+        "color": "#c084fc",
+        "when": "inboundTower",
+        "surface": "air",
+        "requires": ["tour-params-readback-libre"],
+        "text": "{shortCs}, point {reportPoint} pour un atterrissage complet.",
+        "motsValidation": [["atterrissage"]],
+        "response": "{shortCs}, intégrez vent arrière {piste}, rappelez vent arrière."
+      },
+      {
+        "id": "tour-report-readback-libre",
+        "kind": "collationnement",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "inboundTower",
+        "surface": "air",
+        "requires": ["tour-report-libre"],
+        "text": "Je rejoins vent arrière {piste}, je rappelle vent arrière, {shortCs}.",
+        "motsValidation": [
+          ["rappelle"]],
+        "response": null
+      },
+      {
+        "id": "tour-downwind-libre",
+        "kind": "ventarriere",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "when": "inboundTower",
+        "surface": "air",
+        "requires": ["tour-report-libre"],
+        "text": "{shortCs}, vent arrière {piste}.",
+        "motsValidation": [["arrière"]],
+        "response": "{shortCs}, rappelez finale {piste}."
+      },
+      {
+        "id": "tour-downwind-readback-libre",
+        "kind": "collationnement",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "inboundTower",
+        "surface": "air",
+        "requires": ["tour-downwind-libre"],
+        "text": "je rappelle finale {piste}, {shortCs}.",
+        "motsValidation": [["finale"]],
+        "response": null
+      },
+      {
+        "id": "tour-final-libre",
+        "kind": "finale",
+        "phase": "Finale",
+        "color": "#fb7185",
+        "when": "inboundTower",
+        "surface": "air",
+        "requires": ["tour-downwind-libre"],
+        "text": "{shortCs}, finale {piste}, pou un complet.",
+        "motsValidation": [["finale"]],
+        "response": "{shortCs}, {wind}, autorisé atterrissage {piste}."
+      },
+      {
+        "id": "tour-landing-readback-libre",
+        "kind": "collationnement",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "inboundTower",
+        "surface": "air",
+        "requires": ["tour-final-libre"],
+        "text": "Autorisé atterrissage {piste}, {shortCs}.",
+        "motsValidation": [["atterrissage"]],
+        "response": null
+      },
+      {
+        "id": "tour-parking-libre",
+        "kind": "pistedegagee",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "surface": "ground",
+        "requires": ["tour-final-libre"],
+        "text": "{shortCs}, piste dégagée.",
+        "motsValidation": [["piste"]],
+        "response": "{shortCs}, piste dégagée reçue, {groundHandoffText}, au revoir."
+      },
+      {
+        "id": "tour-leave-libre",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "surface": "ground",
+        "requires": ["tour-parking-libre"],
+        "text": "Je contacte {trafficName} Sol sur {groundFreq}, je quitte la fréquence, {farewell}, {shortCs}.",
+        "motsValidation": [["quitte"], ["fréquence"]],
+        "response": "{shortCs}, vous pouvez quitter, au revoir."
+      }
+    ]
+  }
+}

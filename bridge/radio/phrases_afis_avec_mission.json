@@ -1,0 +1,1001 @@
+{
+  "service": "afis",
+  "context": "avec_mission",
+  "scenarios": {
+    "departure": [
+      {
+        "id": "afis-contact",
+        "kind": "bonjour",
+        "phase": "Contact",
+        "color": "#60a5fa",
+        "text": "{station}, {cs}, bonjour.",
+        "motsValidation": [
+          [
+            "bonjour"
+          ]
+        ],
+        "response": "{shortCs}, bonjour, {station}, j'écoute."
+      },
+      {
+        "id": "afis-params",
+        "kind": "params",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": [
+          "afis-contact"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, {acType} VFR avec {pob}, au parking, {destination}.",
+        "motsValidation": [
+          [
+            "parking"
+          ]
+        ],
+        "response": "{shortCs}, {piste}, {wind}, {qnh}. {afisTrafic}, rappelez pour rouler."
+      },
+      {
+        "id": "afis-params-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": [
+          "afis-params"
+        ],
+        "surface": "ground",
+        "text": "{piste}, {qnh}, {shortCs}.",
+        "motsValidation": [
+          [
+            "piste"
+          ]
+        ],
+        "response": null
+      },
+      {
+        "id": "afis-taxi",
+        "phase": "Roulage",
+        "color": "#34d399",
+        "requires": [
+          "afis-params-readback"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, je roule au point d'attente {holdingFull}.",
+        "motsValidation": [
+          [
+            "roule"
+          ],
+          [
+            "attente"
+          ]
+        ],
+        "response": "{shortCs}, {afisTrafic2}, rappelez point d'attente {holdingFull}."
+      },
+      {
+        "id": "afis-ready",
+        "kind": "depart",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": [
+          "afis-taxi"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, au point d'attente {holdingFull}, prêt au départ.",
+        "motsValidation": [
+          [
+            "attente"
+          ],
+          [
+            "départ"
+          ]
+        ],
+        "response": "{shortCs}, {afisTrafic2}."
+      },
+      {
+        "id": "afis-lineup",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": [
+          "afis-ready"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, je m'aligne {piste}.",
+        "motsValidation": [
+          [
+            "aligne"
+          ]
+        ],
+        "response": "{shortCs}, rappelez aligné prêt {piste}.",
+        "mutex": "afis-lineup"
+      },
+      {
+        "id": "afis-backtrack",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": [
+          "afis-ready"
+        ],
+        "mutex": "afis-lineup",
+        "surface": "ground",
+        "text": "{station}, {shortCs}, je remonte la {piste} et je m'aligne.",
+        "motsValidation": [
+          [
+            "remonte"
+          ]
+        ],
+        "response": "{shortCs}, rappelez aligné prêt {piste}."
+      },
+      {
+        "id": "afis-takeoff",
+        "phase": "Décollage",
+        "color": "#22c55e",
+        "requires": [
+          "afis-ready"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, aligné prêt, je décolle {piste}.",
+        "motsValidation": [
+          [
+            "décolle"
+          ]
+        ],
+        "response": "{shortCs}, {wind}, rappelez pour quitter la fréquence."
+      },
+      {
+        "id": "afis-leave",
+        "kind": "quitter",
+        "phase": "Sortie",
+        "color": "#f59e0b",
+        "requires": [
+          "afis-takeoff"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, sortie de circuit{departurePointSuffix}, je quitte la fréquence, {farewell}.",
+        "motsValidation": [
+          [
+            "quitte"
+          ]
+        ],
+        "response": "{shortCs}, reçu, au revoir."
+      }
+    ],
+    "arrival": [
+      {
+        "id": "afis-contact-return",
+        "kind": "bonjour",
+        "phase": "Contact",
+        "color": "#a78bfa",
+        "when": "inboundAfis",
+        "text": "{station}, {cs}, bonjour.",
+        "motsValidation": [
+          [
+            "bonjour"
+          ]
+        ],
+        "response": "{shortCs}, bonjour, {station}, j'écoute."
+      },
+      {
+        "id": "afis-params-return",
+        "kind": "params",
+        "phase": "Retour",
+        "color": "#a78bfa",
+        "when": "inboundAfis",
+        "requires": [
+          "afis-contact-return"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, {acType} VFR avec {pob}, {inboundOrigin}, {inboundPositionDir}, pour atterrissage.",
+        "motsValidation": [
+          [
+            "atterrissage"
+          ]
+        ],
+        "response": "{shortCs}, {piste} en service, {wind}, {qnh}. {afisTrafic}, {reportInstruction}"
+      },
+      {
+        "id": "afis-params-return-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "inboundAfis",
+        "requires": [
+          "afis-params-return"
+        ],
+        "surface": "air",
+        "text": "{reportReadback}, {piste}, {qnh}, {shortCs}.",
+        "motsValidation": [
+          [
+            "piste"
+          ]
+        ],
+        "response": null
+      },
+      {
+        "id": "afis-report",
+        "kind": "integration",
+        "phase": "Report",
+        "color": "#c084fc",
+        "when": "inboundAfis",
+        "requires": [
+          "afis-params-return-readback"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, {reportPointCall}{altitudeAnnounce}, pour intégration dans le circuit {piste}.",
+        "motsValidation": [
+          [
+            "circuit"
+          ]
+        ],
+        "response": "{shortCs}, rappelez verticale terrain {piste}.",
+        "mutex": "afis-integ"
+      },
+      {
+        "id": "afis-report-direct",
+        "kind": "integration_directe",
+        "phase": "Report",
+        "color": "#c084fc",
+        "when": "inboundAfis",
+        "requires": [
+          "afis-params-return-readback"
+        ],
+        "mutex": "afis-integ",
+        "surface": "air",
+        "text": "{station}, {shortCs}, {reportPointCall}{altitudeAnnounce}, pour une approche directe {piste}.",
+        "motsValidation": [
+          [
+            "directe"
+          ]
+        ],
+        "response": "{shortCs}, {afisTrafic2}, rappelez finale {piste}."
+      },
+      {
+        "id": "afis-report-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "inboundAfis",
+        "requires": [
+          "afis-report"
+        ],
+        "surface": "air",
+        "text": "Je rappelle verticale terrain {piste}, {shortCs}.",
+        "motsValidation": [
+          [
+            "rappelle"
+          ]
+        ],
+        "response": null
+      },
+      {
+        "id": "afis-report-direct-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "when": "inboundAfis",
+        "requires": [
+          "afis-report-direct"
+        ],
+        "surface": "air",
+        "text": "Je rappelle finale {piste}, {shortCs}.",
+        "motsValidation": [
+          [
+            "rappelle"
+          ]
+        ],
+        "response": null
+      },
+      {
+        "id": "afis-integration-readback",
+        "kind": "ventarriere",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "requires": [
+          "afis-report-readback"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, verticale terrain {piste}.",
+        "motsValidation": [
+          [
+            "verticale"
+          ]
+        ],
+        "response": "{shortCs}, rappelez vent arrière {piste}."
+      },
+      {
+        "id": "afis-downwind",
+        "kind": "ventarriere",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "requires": [
+          "afis-integration-readback"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, vent arrière{circuitSide} {piste}.",
+        "motsValidation": [
+          [
+            "arriere"
+          ]
+        ],
+        "response": "{shortCs}, rappelez étape de base {piste}."
+      },
+      {
+        "id": "afis-base-return",
+        "kind": "base",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "requires": [
+          "afis-downwind"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, étape de base {piste}.",
+        "motsValidation": [
+          [
+            "étape"
+          ],
+          [
+            "base"
+          ]
+        ],
+        "response": "{shortCs}, {afisTrafic2}, rappelez finale {piste}."
+      },
+      {
+        "id": "afis-final",
+        "kind": "finale",
+        "phase": "Finale",
+        "color": "#fb7185",
+        "requires": [
+          "afis-base-return"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, finale {piste}, pour un complet.",
+        "motsValidation": [
+          [
+            "finale"
+          ]
+        ],
+        "response": "{shortCs}, {wind}. {afisTrafic}, rappelez piste dégagée."
+      },
+      {
+        "id": "afis-final-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": [
+          "afis-final"
+        ],
+        "surface": "air",
+        "text": "Je rappelle piste dégagée, {shortCs}.",
+        "motsValidation": [
+          [
+            "rappel"
+          ],
+          [
+            "piste"
+          ]
+        ],
+        "response": null
+      },
+      {
+        "id": "afis-goaround",
+        "phase": "Rem. gaz",
+        "color": "#ef4444",
+        "requires": [
+          "afis-final-readback"
+        ],
+        "mutex": "afis-vacate",
+        "text": "{station}, {shortCs}, je remets les gaz {piste}, je rappelle en vent arrière{circuitSide}.",
+        "motsValidation": [
+          [
+            "remets",
+            "remise"
+          ],
+          [
+            "gaz"
+          ]
+        ],
+        "response": "{shortCs}, reçu, rappelez vent arrière {piste}."
+      },
+      {
+        "id": "afis-landing-backtrack",
+        "phase": "Atterr.",
+        "color": "#f97316",
+        "requires": [
+          "afis-final-readback"
+        ],
+        "mutex": "afis-vacate",
+        "text": "{station}, {shortCs}, je remonte la {piste}.",
+        "motsValidation": [
+          [
+            "remonte"
+          ]
+        ],
+        "response": "{shortCs}, reçu, rappelez piste dégagée."
+      },
+      {
+        "id": "afis-parking",
+        "kind": "pistedegagee",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "requires": [
+          "afis-final-readback"
+        ],
+        "text": "{station}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [
+          [
+            "dégagée"
+          ]
+        ],
+        "response": "{shortCs}, rappelez parking.",
+        "mutex": "afis-vacate"
+      },
+      {
+        "id": "afis-leave-return",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": [
+          "afis-parking"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [
+          [
+            "quitte"
+          ]
+        ],
+        "response": "{shortCs}, au revoir."
+      },
+      {
+        "id": "afis-parking-backtrack",
+        "kind": "pistedegagee",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "requires": [
+          "afis-landing-backtrack"
+        ],
+        "text": "{station}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [
+          [
+            "dégagée"
+          ]
+        ],
+        "response": "{shortCs}, rappelez parking."
+      },
+      {
+        "id": "afis-leave-return-backtrack",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": [
+          "afis-parking-backtrack"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [
+          [
+            "quitte"
+          ]
+        ],
+        "response": "{shortCs}, au revoir."
+      },
+      {
+        "id": "afis-final-direct",
+        "kind": "finale",
+        "phase": "Finale",
+        "color": "#fb7185",
+        "requires": [
+          "afis-report-direct-readback"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, finale {piste}, pour un complet.",
+        "motsValidation": [
+          [
+            "finale"
+          ]
+        ],
+        "response": "{shortCs}, {wind}. {afisTrafic}, rappelez piste dégagée.",
+        "when": "inboundAfis"
+      },
+      {
+        "id": "afis-final-direct-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": [
+          "afis-final-direct"
+        ],
+        "surface": "air",
+        "text": "Je rappelle piste dégagée, {shortCs}.",
+        "motsValidation": [
+          [
+            "rappel"
+          ],
+          [
+            "piste"
+          ]
+        ],
+        "response": null
+      },
+      {
+        "id": "afis-goaround-direct",
+        "phase": "Rem. gaz",
+        "color": "#ef4444",
+        "requires": [
+          "afis-final-direct-readback"
+        ],
+        "mutex": "afis-vacate-direct",
+        "text": "{station}, {shortCs}, je remets les gaz {piste}, je rappelle en vent arrière{circuitSide}.",
+        "motsValidation": [
+          [
+            "remets",
+            "remise"
+          ],
+          [
+            "gaz"
+          ]
+        ],
+        "response": "{shortCs}, reçu, rappelez vent arrière {piste}."
+      },
+      {
+        "id": "afis-landing-backtrack-direct",
+        "phase": "Atterr.",
+        "color": "#f97316",
+        "requires": [
+          "afis-final-direct-readback"
+        ],
+        "mutex": "afis-vacate-direct",
+        "text": "{station}, {shortCs}, je remonte la {piste}.",
+        "motsValidation": [
+          [
+            "remonte"
+          ]
+        ],
+        "response": "{shortCs}, reçu, rappelez piste dégagée."
+      },
+      {
+        "id": "afis-parking-direct",
+        "kind": "pistedegagee",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "requires": [
+          "afis-final-direct-readback"
+        ],
+        "text": "{station}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [
+          [
+            "dégagée"
+          ]
+        ],
+        "response": "{shortCs}, rappelez parking.",
+        "mutex": "afis-vacate-direct"
+      },
+      {
+        "id": "afis-parking-backtrack-direct",
+        "kind": "pistedegagee",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "requires": [
+          "afis-landing-backtrack-direct"
+        ],
+        "text": "{station}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [
+          [
+            "dégagée"
+          ]
+        ],
+        "response": "{shortCs}, rappelez parking."
+      },
+      {
+        "id": "afis-leave-return-direct",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": [
+          "afis-parking-direct"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [
+          [
+            "quitte"
+          ]
+        ],
+        "response": "{shortCs}, au revoir."
+      },
+      {
+        "id": "afis-leave-return-backtrack-direct",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": [
+          "afis-parking-backtrack-direct"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [
+          [
+            "quitte"
+          ]
+        ],
+        "response": "{shortCs}, au revoir."
+      }
+    ],
+    "tourDePiste": [
+      {
+        "id": "afis-contact-tdp",
+        "kind": "bonjour",
+        "phase": "Contact",
+        "color": "#60a5fa",
+        "text": "{station}, {cs}, bonjour.",
+        "motsValidation": [
+          [
+            "bonjour"
+          ]
+        ],
+        "response": "{shortCs}, bonjour, {station}, j'écoute."
+      },
+      {
+        "id": "afis-params-tdp",
+        "kind": "params",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": [
+          "afis-contact-tdp"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, {acType} VFR avec {pob}, au parking, pour des tours de piste.",
+        "motsValidation": [
+          [
+            "parking"
+          ]
+        ],
+        "response": "{shortCs}, {piste}, {wind}, {qnh}. {afisTrafic}, rappelez pour rouler."
+      },
+      {
+        "id": "afis-params-tdp-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": [
+          "afis-params-tdp"
+        ],
+        "surface": "ground",
+        "text": "{piste}, {qnh}, {shortCs}.",
+        "motsValidation": [
+          [
+            "piste"
+          ]
+        ],
+        "response": null
+      },
+      {
+        "id": "afis-taxi-tdp",
+        "phase": "Roulage",
+        "color": "#34d399",
+        "requires": [
+          "afis-params-tdp-readback"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, je roule au point d'attente {holdingFull}.",
+        "motsValidation": [
+          [
+            "roule"
+          ],
+          [
+            "attente"
+          ]
+        ],
+        "response": "{shortCs}, {afisTrafic2}, rappelez point d'attente {holdingFull}."
+      },
+      {
+        "id": "afis-ready-tdp",
+        "kind": "depart",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": [
+          "afis-taxi-tdp"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, au point d'attente {holdingFull}, prêt au départ.",
+        "motsValidation": [
+          [
+            "attente"
+          ],
+          [
+            "départ"
+          ]
+        ],
+        "response": "{shortCs}, {afisTrafic2}."
+      },
+      {
+        "id": "afis-lineup-tdp",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": [
+          "afis-ready-tdp"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, je m'aligne {piste}.",
+        "motsValidation": [
+          [
+            "aligne"
+          ]
+        ],
+        "response": "{shortCs}, rappelez aligné prêt {piste}.",
+        "mutex": "afis-lineup-tdp"
+      },
+      {
+        "id": "afis-backtrack-tdp",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": [
+          "afis-ready-tdp"
+        ],
+        "mutex": "afis-lineup-tdp",
+        "surface": "ground",
+        "text": "{station}, {shortCs}, je remonte la {piste} et je m'aligne.",
+        "motsValidation": [
+          [
+            "remonte"
+          ]
+        ],
+        "response": "{shortCs}, rappelez aligné prêt {piste}."
+      },
+      {
+        "id": "afis-takeoff-tdp",
+        "phase": "Décollage",
+        "color": "#22c55e",
+        "requires": [
+          "afis-ready-tdp"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, aligné prêt, je décolle {piste}.",
+        "motsValidation": [
+          [
+            "décolle"
+          ]
+        ],
+        "response": "{shortCs}, {wind}, rappelez en début de vent arrière {piste}."
+      },
+      {
+        "id": "afis-leave-tdp-readback",
+        "phase": "Collationnement",
+        "color": "#22c55e",
+        "requires": [
+          "afis-takeoff-tdp"
+        ],
+        "surface": "air",
+        "text": "Je rappelle en début de vent arrière, {shortCs}.",
+        "motsValidation": [
+          [
+            "début"
+          ],
+          [
+            "arrière"
+          ]
+        ],
+        "response": null
+      },
+      {
+        "id": "afis-downwind-tdp",
+        "kind": "ventarriere",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "requires": [
+          "afis-leave-tdp-readback"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, en début de vent arrière{circuitSide} {piste}.",
+        "motsValidation": [
+          [
+            "début"
+          ],
+          [
+            "arrière"
+          ]
+        ],
+        "response": "{shortCs}, rappelez en étape de base {piste}."
+      },
+      {
+        "id": "afis-base-tdp",
+        "kind": "base",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "requires": [
+          "afis-downwind-tdp"
+        ],
+        "surface": "air",
+        "text": "{station}, {shortCs}, étape de base {piste}.",
+        "motsValidation": [
+          [
+            "étape"
+          ],
+          [
+            "base"
+          ]
+        ],
+        "response": "{shortCs}, rappelez finale {piste}."
+      },
+      {
+        "id": "afis-final-tdp",
+        "kind": "finale",
+        "phase": "Finale",
+        "color": "#fb7185",
+        "requires": [
+          "afis-base-tdp"
+        ],
+        "mutex": "tdp-finale",
+        "surface": "air",
+        "text": "{station}, {shortCs}, finale {piste}, pour un touché.",
+        "motsValidation": [
+          [
+            "finale"
+          ],
+          [
+            "touché",
+            "posé",
+            "touch",
+            "décollé"
+          ]
+        ],
+        "response": "{shortCs}, {wind}. {afisTrafic}, rappelez en début de vent arrière {piste}."
+      },
+      {
+        "id": "afis-final-tdp-complet",
+        "kind": "finalecomplet",
+        "phase": "Finale",
+        "color": "#fb7185",
+        "requires": [
+          "afis-base-tdp"
+        ],
+        "mutex": "tdp-finale",
+        "surface": "air",
+        "text": "{station}, {shortCs}, finale {piste}, pour un complet.",
+        "motsValidation": [
+          [
+            "finale"
+          ],
+          [
+            "complet"
+          ]
+        ],
+        "response": "{shortCs}, {wind}. {afisTrafic}, rappelez piste dégagée."
+      },
+      {
+        "id": "afis-goaround-tdp-touche",
+        "phase": "Rem. gaz",
+        "color": "#ef4444",
+        "requires": [
+          "afis-final-tdp"
+        ],
+        "text": "{station}, {shortCs}, je remets les gaz {piste}, je rappelle en vent arrière{circuitSide}.",
+        "motsValidation": [
+          [
+            "remets",
+            "remise"
+          ],
+          [
+            "gaz"
+          ]
+        ],
+        "response": "{shortCs}, reçu, rappelez vent arrière {piste}."
+      },
+      {
+        "id": "afis-final-tdp-readback",
+        "phase": "Collationnement",
+        "color": "#fbbf24",
+        "requires": [
+          "afis-final-tdp-complet"
+        ],
+        "surface": "air",
+        "text": "Je rappelle piste dégagée, {shortCs}.",
+        "motsValidation": [
+          [
+            "rappel"
+          ],
+          [
+            "dégagée"
+          ]
+        ],
+        "response": null
+      },
+      {
+        "id": "afis-goaround-tdp",
+        "phase": "Rem. gaz",
+        "color": "#ef4444",
+        "requires": [
+          "afis-final-tdp-readback"
+        ],
+        "mutex": "afis-vacate-tdp",
+        "text": "{station}, {shortCs}, je remets les gaz {piste}, je rappelle en vent arrière{circuitSide}.",
+        "motsValidation": [
+          [
+            "remets",
+            "remise"
+          ],
+          [
+            "gaz"
+          ]
+        ],
+        "response": "{shortCs}, reçu, rappelez vent arrière {piste}."
+      },
+      {
+        "id": "afis-landing-backtrack-tdp",
+        "phase": "Atterr.",
+        "color": "#f97316",
+        "requires": [
+          "afis-final-tdp-readback"
+        ],
+        "mutex": "afis-vacate-tdp",
+        "text": "{station}, {shortCs}, je remonte la {piste}.",
+        "motsValidation": [
+          [
+            "remonte"
+          ]
+        ],
+        "response": "{shortCs}, reçu, rappelez piste dégagée."
+      },
+      {
+        "id": "afis-parking-tdp",
+        "kind": "pistedegagee",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "requires": [
+          "afis-final-tdp-readback"
+        ],
+        "text": "{station}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [
+          [
+            "dégagée"
+          ]
+        ],
+        "response": "{shortCs}, rappelez parking.",
+        "mutex": "afis-vacate-tdp"
+      },
+      {
+        "id": "afis-leave-tdp",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": [
+          "afis-parking-tdp"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [
+          [
+            "quitte"
+          ],
+          [
+            "fréquence"
+          ]
+        ],
+        "response": "{shortCs}, au revoir."
+      },
+      {
+        "id": "afis-parking-backtrack-tdp",
+        "kind": "pistedegagee",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "requires": [
+          "afis-landing-backtrack-tdp"
+        ],
+        "text": "{station}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [
+          [
+            "dégagée"
+          ]
+        ],
+        "response": "{shortCs}, rappelez parking."
+      },
+      {
+        "id": "afis-leave-tdp-backtrack",
+        "kind": "quitter",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": [
+          "afis-parking-backtrack-tdp"
+        ],
+        "surface": "ground",
+        "text": "{station}, {shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [
+          [
+            "quitte"
+          ]
+        ],
+        "response": "{shortCs}, au revoir."
+      }
+    ]
+  }
+}

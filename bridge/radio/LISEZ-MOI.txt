@@ -1,0 +1,36 @@
+FlyFranceVFR - dossier radio
+
+Ce dossier est installe avec FlyFranceVFR dans :
+FlyFranceVFR\bridge\radio
+
+Objectif :
+- separer la configuration radio du gros fichier HTML ;
+- preparer l'ajout futur de voix humaines pour les frequences Sol, AFIS, ATIS, Tour et SIV ;
+- garder la radio actuelle fonctionnelle si aucun fichier audio humain n'est present.
+
+Fichier principal :
+- manifest.json : profils de voix et emplacements prevus des futurs fichiers audio.
+- phrases.json : demandes, reponses et collationnements ecrits modifiables sans toucher au HTML.
+- radio_logic.js : logique radio principale separee du gros fichier HTML.
+
+Structure prevue :
+- voices\sol
+- voices\afis
+- voices\atis
+- voices\tour
+- voices\siv
+- voices\generic
+
+Pour l'instant, FlyFranceVFR utilise encore les voix synthetiques du systeme.
+Les futurs fichiers audio pourront etre references dans manifest.json.
+
+Textes radio :
+- ouvrez phrases.json avec le Bloc-notes, Notepad++ ou Visual Studio Code ;
+- laissez une section vide pour garder la phrase interne du logiciel ;
+- ajoutez une phrase dans requests, responses ou readbacks pour remplacer uniquement cette ligne ;
+- redemarrez FlyFranceVFR apres modification.
+
+Voix radio :
+- les reglages de voix synthetiques sont dans manifest.json ;
+- les dossiers voices\sol, voices\afis, voices\atis, voices\tour et voices\siv sont prevus pour ajouter plus tard des voix humaines ;
+- ne modifiez radio_logic.js que pour changer le comportement radio, pas pour changer simplement une phrase.

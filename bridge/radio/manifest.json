@@ -1,0 +1,61 @@
+{
+  "version": "1",
+  "description": "Configuration radio externe FlyFranceVFR. Ce fichier prepare l'ajout futur de voix humaines par type de frequence.",
+  "voiceProfiles": {
+    "pilot": {
+      "description": "Voix synthetique utilisee pour le pilote lorsque l'application lit une demande.",
+      "rate": 0.96,
+      "pitch": 1.05,
+      "volume": 1
+    },
+    "ground": {
+      "description": "Frequences Sol.",
+      "rate": 0.88,
+      "pitch": 0.72,
+      "volume": 1,
+      "audioFolder": "voices/sol"
+    },
+    "radio": {
+      "description": "Controleur generique, AFIS et SIV si aucun profil plus precis n'est fourni.",
+      "rate": 0.9,
+      "pitch": 0.78,
+      "volume": 1,
+      "audioFolder": "voices/generic"
+    },
+    "atis": {
+      "description": "Diffusion ATIS.",
+      "rate": 0.84,
+      "pitch": 0.92,
+      "volume": 1,
+      "audioFolder": "voices/atis"
+    },
+    "tower": {
+      "description": "Frequences Tour. Profil reserve pour les voix humaines futures.",
+      "rate": 0.9,
+      "pitch": 0.78,
+      "volume": 1,
+      "audioFolder": "voices/tour"
+    },
+    "afis": {
+      "description": "Frequences AFIS. Profil reserve pour les voix humaines futures.",
+      "rate": 0.9,
+      "pitch": 0.78,
+      "volume": 1,
+      "audioFolder": "voices/afis"
+    },
+    "siv": {
+      "description": "Frequences SIV / Information. Profil reserve pour les voix humaines futures.",
+      "rate": 0.9,
+      "pitch": 0.78,
+      "volume": 1,
+      "audioFolder": "voices/siv"
+    }
+  },
+  "audioClips": {
+    "sol": {},
+    "afis": {},
+    "atis": {},
+    "tour": {},
+    "siv": {}
+  }
+}

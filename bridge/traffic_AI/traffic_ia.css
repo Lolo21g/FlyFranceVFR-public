@@ -1,0 +1,7 @@
+/* Styles propres au module Trafic IA — FlyFranceVFR */
+#panel-ai-traffic #ai-traffic-list { display:flex; flex-direction:column; gap:7px; }
+#panel-ai-traffic #ai-traffic-list .card { margin:0; }
+#panel-ai-traffic button:disabled { opacity:.48; cursor:not-allowed; }
+/* Immatriculation affichée au-dessus de l'avion IA sur la carte */
+.leaflet-tooltip.ai-tail-label{background:rgba(15,17,23,.88);color:#fff;border:1px solid #67c8ff;border-radius:4px;padding:1px 6px;font:600 11px 'DM Mono',monospace;box-shadow:none;letter-spacing:.03em;}
+.leaflet-tooltip.ai-tail-label:before{display:none;}

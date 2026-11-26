@@ -1,0 +1,201 @@
+{
+  "service": "aa",
+  "context": "sans_mission",
+  "scenarios": {
+    "libre departure": [
+      {
+        "id": "aa-taxi-libre",
+        "phase": "Départ",
+        "color": "#34d399",
+        "when": "localDepartureAA",
+        "surface": "ground",
+        "text": "{trafficName}, {cs}, {acType}, au parking, je roule au point d'attente {holdingFull}, pour un vol local.",
+        "motsValidation": [["roule"], ["attente"]],
+        "response": null,
+        "mutex": "aa-taxi-libre"
+      },
+      {
+        "id": "aa-taxi-destination-libre",
+        "phase": "Départ",
+        "color": "#34d399",
+        "when": "localDepartureAA",
+        "surface": "ground",
+        "text": "{trafficName}, {cs}, {acType}, au parking, je roule au point d'attente {holdingFull}, pour un vol à destination de ___.",
+        "motsValidation": [["roule"], ["attente"]],
+        "response": null,
+        "mutex": "aa-taxi-libre"
+      },
+      {
+        "id": "aa-taxi-tours-libre",
+        "phase": "Départ",
+        "color": "#34d399",
+        "when": "localDepartureAA",
+        "surface": "ground",
+        "text": "{trafficName}, {cs}, {acType}, au parking, je roule au point d'attente {holdingFull}, pour des tours de piste.",
+        "motsValidation": [["roule"], ["attente"]],
+        "response": null,
+        "mutex": "aa-taxi-libre"
+      },
+      {
+        "id": "aa-ready-libre",
+        "phase": "Départ",
+        "color": "#34d399",
+        "when": "localDepartureAA",
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, au point d'attente {holdingFull}, je m'aligne {piste}.",
+        "motsValidation": [["attente"], ["aligne"]],
+        "response": null,
+        "mutex": "aa-lineup-libre"
+      },
+      {
+        "id": "aa-ready-backtrack-libre",
+        "phase": "Départ",
+        "color": "#34d399",
+        "mutex": "aa-lineup-libre",
+        "text": "{trafficName}, {shortCs}, au point d'attente {holdingFull}, je remonte la {piste} et je m'aligne.",
+        "motsValidation": [["attente"], ["remonte"]],
+        "response": null,
+        "when": "localDepartureAA",
+        "surface": "ground"
+      },
+      {
+        "id": "aa-takeoff-libre",
+        "phase": "Décollage",
+        "color": "#22c55e",
+        "when": "localDepartureAA",
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, je décolle {piste}{departurePointAnnounce}.",
+        "motsValidation": [["décolle"]],
+        "response": null
+      },
+      {
+        "id": "aa-leave-libre",
+        "phase": "Sortie",
+        "color": "#f59e0b",
+        "when": "localDepartureAA",
+        "surface": "air",
+        "requires": ["aa-takeoff-libre"],
+        "text": "{trafficName}, {shortCs}, sortie de circuit{departurePointSuffix}{altitudeAnnounce}, je quitte la fréquence, {farewell}.",
+        "motsValidation": [["quitte"]],
+        "response": null
+      }
+    ],
+    "libre arrival": [
+      {
+        "id": "aa-report-libre",
+        "phase": "Retour",
+        "color": "#a78bfa",
+        "when": "inboundAA",
+        "surface": "air",
+        "text": "{trafficName}, {cs}, {acType}, de retour d'un vol local{reportPointAnnounce}, {inboundPositionDir}, je rappelle verticale.",
+        "motsValidation": [["rappel"], ["verticale"]],
+        "response": null,
+        "mutex": "aa-report-libre"
+      },
+      {
+        "id": "aa-report-origine-libre",
+        "phase": "Retour",
+        "color": "#a78bfa",
+        "when": "inboundAA",
+        "surface": "air",
+        "text": "{trafficName}, {cs}, {acType}, en provenance de ___{reportPointAnnounce}, {inboundPositionDir}, je rappelle verticale.",
+        "motsValidation": [["rappel"], ["verticale"]],
+        "response": null,
+        "mutex": "aa-report-libre"
+      },
+      {
+        "id": "aa-integration-libre",
+        "phase": "Intégration",
+        "color": "#c084fc",
+        "when": "inboundAA",
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, verticale terrain{altitudeAnnounce}.",
+        "motsValidation": [["verticale"]],
+        "response": null
+      },
+      {
+        "id": "aa-downwind-libre",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "surface": "air",
+        "requires": ["aa-integration-libre"],
+        "text": "{trafficName}, {shortCs}, vent arrière{circuitSide} {piste}.",
+        "motsValidation": [["arriere"]],
+        "response": null
+      },
+      {
+        "id": "aa-base-libre",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "surface": "air",
+        "requires": ["aa-downwind-libre"],
+        "text": "{trafficName}, {shortCs}, étape de base {piste}.",
+        "motsValidation": [["étape"], ["base"]],
+        "response": null
+      },
+      {
+        "id": "aa-final-libre",
+        "phase": "Finale",
+        "color": "#fb7185",
+        "surface": "air",
+        "requires": ["aa-base-libre"],
+        "text": "{trafficName}, {shortCs}, finale {piste} pour un complet.",
+        "motsValidation": [["finale"]],
+        "response": null
+      },
+      {
+        "id": "aa-goaround-libre",
+        "phase": "Rem. gaz",
+        "color": "#ef4444",
+        "surface": "air",
+        "requires": ["aa-final-libre"],
+        "mutex": "aa-vacate-libre",
+        "text": "{trafficName}, {shortCs}, je remets les gaz {piste}, je rappelle en vent arrière{circuitSide}.",
+        "motsValidation": [["remets"], ["gaz"]],
+        "response": null
+      },
+      {
+        "id": "aa-backtrack-libre",
+        "phase": "Atterr.",
+        "color": "#f97316",
+        "surface": "ground",
+        "requires": ["aa-final-libre"],
+        "text": "{trafficName}, {shortCs}, je remonte la {piste}.",
+        "motsValidation": [["remonte"]],
+        "response": null,
+        "mutex": "aa-vacate-libre"
+      },
+      {
+        "id": "aa-vacate-libre",
+        "phase": "Atterr.",
+        "color": "#f97316",
+        "surface": "ground",
+        "requires": ["aa-final-libre"],
+        "mutex": "aa-vacate-libre",
+        "text": "{trafficName}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [["piste"], ["parking"]],
+        "response": null
+      },
+      {
+        "id": "aa-parking-libre",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "surface": "ground",
+        "requires": ["aa-backtrack-libre"],
+        "text": "{trafficName}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [["piste"], ["parking"]],
+        "response": null
+      },
+      {
+        "id": "aa-leave-return-libre",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "surface": "ground",
+        "requires": ["aa-final-libre"],
+        "text": "{trafficName}, {shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [["quitte"], ["fréquence"]],
+        "response": null
+      }
+    ]
+  }
+}

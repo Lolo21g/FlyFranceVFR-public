@@ -1,0 +1,313 @@
+{
+  "service": "aa",
+  "context": "avec_mission",
+  "scenarios": {
+    "departure": [
+      {
+        "id": "aa-taxi",
+        "phase": "Départ",
+        "color": "#34d399",
+        "surface": "ground",
+        "text": "{trafficName}, {cs}, {acType}, au parking, je roule au point d'attente {holdingFull}, {destination}.",
+        "motsValidation": [["roule"], ["attente"]],
+        "response": null
+      },
+      {
+        "id": "aa-ready",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": ["aa-taxi"],
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, au point d'attente {holdingFull}, je m'aligne {piste}.",
+        "motsValidation": [["attente"], ["aligne"]],
+        "response": null,
+        "mutex": "aa-lineup"
+      },
+      {
+        "id": "aa-ready-backtrack",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": ["aa-taxi"],
+        "mutex": "aa-lineup",
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, au point d'attente {holdingFull}, je remonte la {piste} et je m'aligne.",
+        "motsValidation": [["attente"], ["remonte"]],
+        "response": null
+      },
+      {
+        "id": "aa-takeoff",
+        "phase": "Décollage",
+        "color": "#22c55e",
+        "requires": ["aa-taxi"],
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, je décolle {piste}{departurePointAnnounce}.",
+        "motsValidation": [["décolle"]],
+        "response": null
+      },
+      {
+        "id": "aa-leave",
+        "phase": "Sortie",
+        "color": "#f59e0b",
+        "requires": ["aa-takeoff"],
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, sortie de circuit{departurePointSuffix}{altitudeAnnounce}, je quitte la fréquence, {farewell}.",
+        "motsValidation": [["quitte"]],
+        "response": null
+      }
+    ],
+    "arrival": [
+      {
+        "id": "aa-report",
+        "phase": "Retour",
+        "color": "#a78bfa",
+        "when": "inboundAA",
+        "surface": "air",
+        "text": "{trafficName}, {cs}, {acType}, {inboundOriginAA}{reportPointAnnounce}, {inboundPositionDir}, je rappelle verticale.",
+        "motsValidation": [["rappelle"], ["verticale"]],
+        "response": null
+      },
+      {
+        "id": "aa-integration",
+        "phase": "Intégration",
+        "color": "#c084fc",
+        "when": "inboundAA",
+        "requires": ["aa-report"],
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, verticale terrain{altitudeAnnounce}.",
+        "motsValidation": [["verticale"]],
+        "response": null
+      },
+      {
+        "id": "aa-downwind",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "requires": ["aa-integration"],
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, vent arrière{circuitSide} {piste}.",
+        "motsValidation": [["arrière"]],
+        "response": null
+      },
+      {
+        "id": "aa-base",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "requires": ["aa-downwind"],
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, étape de base {piste}.",
+        "motsValidation": [["étape"], ["base"]],
+        "response": null
+      },
+      {
+        "id": "aa-final",
+        "phase": "Finale",
+        "color": "#fb7185",
+        "requires": ["aa-base"],
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, finale {piste} pour un complet.",
+        "motsValidation": [["finale"]],
+        "response": null
+      },
+      {
+        "id": "aa-goaround",
+        "phase": "Rem. gaz",
+        "color": "#ef4444",
+        "requires": ["aa-final"],
+        "mutex": "aa-vacate",
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, je remets les gaz {piste}, je rappelle en vent arrière{circuitSide}.",
+        "motsValidation": [["remets"], ["gaz"]],
+        "response": null
+      },
+      {
+        "id": "aa-backtrack",
+        "phase": "Atterr.",
+        "color": "#f97316",
+        "requires": ["aa-final"],
+        "mutex": "aa-vacate",
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, je remonte la {piste}.",
+        "motsValidation": [["remonte"]],
+        "response": null
+      },
+      {
+        "id": "aa-vacate",
+        "phase": "Atterr.",
+        "color": "#f97316",
+        "requires": ["aa-final"],
+        "mutex": "aa-vacate",
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [["piste"], ["parking"]],
+        "response": null
+      },
+      {
+        "id": "aa-parking",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "requires": ["aa-backtrack"],
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [["piste"], ["parking"]],
+        "response": null
+      },
+      {
+        "id": "aa-leave-return",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": ["aa-final"],
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [["quitte"]],
+        "response": null
+      }
+    ],
+    "tourDePiste": [
+      {
+        "id": "aa-taxi-tdp",
+        "phase": "Départ",
+        "color": "#34d399",
+        "surface": "ground",
+        "text": "{trafficName}, {cs}, {acType}, au parking, je roule au point d'attente {holdingFull}, pour des tours de piste.",
+        "motsValidation": [["roule"], ["attente"]],
+        "response": null
+      },
+      {
+        "id": "aa-ready-tdp",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": ["aa-taxi-tdp"],
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, au point d'attente {holdingFull}, je m'aligne {piste}.",
+        "motsValidation": [["attente"], ["aligne"]],
+        "response": null,
+        "mutex": "aa-lineup-tdp"
+      },
+      {
+        "id": "aa-ready-backtrack-tdp",
+        "phase": "Départ",
+        "color": "#34d399",
+        "requires": ["aa-taxi-tdp"],
+        "mutex": "aa-lineup-tdp",
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, au point d'attente {holdingFull}, je remonte la {piste} et je m'aligne.",
+        "motsValidation": [["attente"], ["remonte"]],
+        "response": null
+      },
+      {
+        "id": "aa-takeoff-tdp",
+        "phase": "Décollage",
+        "color": "#22c55e",
+        "requires": ["aa-taxi-tdp"],
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, je décolle {piste}, je rappelle en vent arrière{circuitSide}.",
+        "motsValidation": [["décolle"]],
+        "response": null
+      },
+      {
+        "id": "aa-downwind-tdp",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "requires": ["aa-takeoff-tdp"],
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, vent arrière{circuitSide} {piste}.",
+        "motsValidation": [["arrière"]],
+        "response": null
+      },
+      {
+        "id": "aa-base-tdp",
+        "phase": "Circuit",
+        "color": "#38bdf8",
+        "requires": ["aa-downwind-tdp"],
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, étape de base {piste}.",
+        "motsValidation": [["étape"], ["base"]],
+        "response": null
+      },
+      {
+        "id": "aa-final-tdp",
+        "phase": "Finale",
+        "color": "#fb7185",
+        "requires": ["aa-base-tdp"],
+        "mutex": "tdp-finale",
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, finale {piste} pour un touché.",
+        "motsValidation": [["finale"]],
+        "response": null
+      },
+      {
+"id": "aa-final-tdp-complet",
+        "phase": "Finale",
+        "color": "#fb7185",
+        "requires": ["aa-base-tdp"],
+        "mutex": "tdp-finale",
+                "surface": "air",
+        "text": "{trafficName}, {shortCs}, finale {piste} pour un complet.",
+        "motsValidation": [["finale"], ["complet"]],
+        "response": null
+      },
+      {
+        "id": "aa-goaround-tdp",
+        "phase": "Rem. gaz",
+        "color": "#ef4444",
+        "requires": ["aa-final-tdp-complet"],
+        "mutex": "tdp-vacate",
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, je remets les gaz {piste}, je rappelle en vent arrière{circuitSide}.",
+        "motsValidation": [["remets"], ["gaz"]],
+        "response": null
+      },
+      {
+"id": "aa-goaround-tdp-touche",
+        "phase": "Rem. gaz",
+        "color": "#ef4444",
+        "requires": ["aa-final-tdp"],
+                "surface": "air",
+        "text": "{trafficName}, {shortCs}, je remets les gaz {piste}, je rappelle en vent arrière{circuitSide}.",
+        "motsValidation": [["remets"], ["gaz"]],
+        "response": null
+      },
+      {
+        "id": "aa-backtrack-tdp",
+        "phase": "Atterr.",
+        "color": "#f97316",
+        "requires": ["aa-final-tdp-complet"],
+        "mutex": "tdp-vacate",
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, je remonte la {piste}.",
+        "motsValidation": [["remonte"], ["piste"]],
+        "response": null
+      },
+      {
+        "id": "aa-vacate-tdp",
+        "phase": "Atterr.",
+        "color": "#f97316",
+        "requires": ["aa-final-tdp-complet"],
+        "mutex": "tdp-vacate",
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [["piste"], ["parking"]],
+        "response": null
+      },
+      {
+        "id": "aa-parking-tdp",
+        "phase": "Parking",
+        "color": "#94a3b8",
+        "requires": ["aa-backtrack-tdp"],
+        "surface": "ground",
+        "text": "{trafficName}, {shortCs}, piste dégagée, je roule au parking.",
+        "motsValidation": [["piste"], ["parking"]],
+        "response": null
+      },
+      {
+        "id": "aa-leave-tdp",
+        "phase": "Quitter",
+        "color": "#64748b",
+        "requires": ["aa-final-tdp-complet"],
+        "surface": "air",
+        "text": "{trafficName}, {shortCs}, au parking, je quitte la fréquence, au revoir.",
+        "motsValidation": [["quitte"], ["fréquence"]],
+        "response": null
+      }
+    ]
+  }
+}

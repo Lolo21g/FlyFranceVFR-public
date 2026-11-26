@@ -1,0 +1,153 @@
+{
+  "version": 3,
+  "airborne_waypoint_control": false,
+  "module": "traffic_AI",
+  "regional_radius_km": 75,
+  "map_visible_radius_km": 15,
+  "map_hysteresis_radius_km": 17,
+  "max_physical_msfs_aircraft": 3,
+  "spawn_interval_seconds": {
+    "min": 5,
+    "max": 15
+  },
+  "simconnect_loss_grace_seconds": 10,
+  "startup_enabled": false,
+  "persist_user_settings": false,
+  "default_density": "auto",
+  "density_modes": [
+    "auto",
+    "low",
+    "normal",
+    "high"
+  ],
+  "alert_history_days": 0,
+  "pilots": [
+    {
+      "id": "pilot-01",
+      "callsign": "F-NACD",
+      "voice": "fr-FR-HenriNeural",
+      "aircraft": "DR400",
+      "paint": "bleu-blanc"
+    },
+    {
+      "id": "pilot-02",
+      "callsign": "F-JFEB",
+      "voice": "fr-FR-DeniseNeural",
+      "aircraft": "C172",
+      "paint": "jaune-noir"
+    },
+    {
+      "id": "pilot-03",
+      "callsign": "F-QEBR",
+      "voice": "fr-FR-HenriNeural",
+      "aircraft": "DR400",
+      "paint": "rouge-blanc"
+    },
+    {
+      "id": "pilot-04",
+      "callsign": "F-KLMT",
+      "voice": "fr-FR-DeniseNeural",
+      "aircraft": "C172",
+      "paint": "bleu-blanc"
+    },
+    {
+      "id": "pilot-05",
+      "callsign": "F-PLVX",
+      "voice": "fr-FR-HenriNeural",
+      "aircraft": "DR400",
+      "paint": "jaune-noir"
+    },
+    {
+      "id": "pilot-06",
+      "callsign": "F-MRQS",
+      "voice": "fr-FR-DeniseNeural",
+      "aircraft": "C172",
+      "paint": "rouge-blanc"
+    },
+    {
+      "id": "pilot-07",
+      "callsign": "F-ABKT",
+      "voice": "fr-FR-HenriNeural",
+      "aircraft": "DR400",
+      "paint": "bleu-blanc"
+    },
+    {
+      "id": "pilot-08",
+      "callsign": "F-CRYD",
+      "voice": "fr-FR-DeniseNeural",
+      "aircraft": "C172",
+      "paint": "jaune-noir"
+    },
+    {
+      "id": "pilot-09",
+      "callsign": "F-DFPN",
+      "voice": "fr-FR-HenriNeural",
+      "aircraft": "DR400",
+      "paint": "rouge-blanc"
+    },
+    {
+      "id": "pilot-10",
+      "callsign": "F-GHWR",
+      "voice": "fr-FR-DeniseNeural",
+      "aircraft": "C172",
+      "paint": "bleu-blanc"
+    },
+    {
+      "id": "pilot-11",
+      "callsign": "F-JKBC",
+      "voice": "fr-FR-HenriNeural",
+      "aircraft": "DR400",
+      "paint": "jaune-noir"
+    },
+    {
+      "id": "pilot-12",
+      "callsign": "F-LNZE",
+      "voice": "fr-FR-DeniseNeural",
+      "aircraft": "C172",
+      "paint": "rouge-blanc"
+    },
+    {
+      "id": "pilot-13",
+      "callsign": "F-MPXA",
+      "voice": "fr-FR-HenriNeural",
+      "aircraft": "DR400",
+      "paint": "bleu-blanc"
+    },
+    {
+      "id": "pilot-14",
+      "callsign": "F-NVQJ",
+      "voice": "fr-FR-DeniseNeural",
+      "aircraft": "C172",
+      "paint": "jaune-noir"
+    },
+    {
+      "id": "pilot-15",
+      "callsign": "F-RTYU",
+      "voice": "fr-FR-HenriNeural",
+      "aircraft": "DR400",
+      "paint": "rouge-blanc"
+    }
+  ],
+  "aircraft_titles": {
+    "DR400": "DR 400 01 Livery",
+    "C172": "Cessna Skyhawk 172Sp G1000 Aviators Club Livery"
+  },
+  "pilot_liveries": {
+    "DR400": {
+      "bleu-blanc": "DR400 Asobo",
+      "jaune-noir": "DR 400 Aviators Club Livery",
+      "rouge-blanc": "DR 400 01 Livery"
+    },
+    "C172": {
+      "bleu-blanc": "Cessna Skyhawk G1000 Asobo",
+      "jaune-noir": "Cessna Skyhawk 172Sp G1000 Aviators Club Livery",
+      "rouge-blanc": "Cessna Skyhawk 172Sp G1000 Xbox Aviators Club Livery"
+    }
+  },
+  "notes": [
+    "Profils fictifs (indicatif, voix, avion, livrée) stables entre les sessions.",
+    "Les noms de voix sont des identifiants logiques : la disponibilité dépendra du moteur vocal installé.",
+    "Les titres SimObject et livrées doivent correspondre à des packages réellement installés dans MSFS.",
+    "pilot_liveries : livrée par pilote (paint -> titre SimObject) ; nécessite un bridge compilé avec le support pilot_liveries."
+  ]
+}
